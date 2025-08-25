@@ -435,23 +435,27 @@ class BedrockAgentCoreApp(Starlette):
         try:
             self.logger.error("AAAA")
             # First attempt: direct JSON serialization with Unicode support
-            return json.dumps(obj, ensure_ascii=False)
+            json_string = json.dumps(obj, ensure_ascii=False)
+            return json_string
         except (TypeError, ValueError, UnicodeEncodeError):
             self.logger.error("BBBB")
             try:
                 # Second attempt: convert to serializable dictionaries, then JSON encode the dictionaries
                 obj = convert_complex_objects(obj)
-                return json.dumps(obj, ensure_ascii=False)
+                json_string = json.dumps(obj, ensure_ascii=False)
+                return json_string
             except Exception as e:
                 self.logger.error("CCCC Error in sync streaming: %s: %s", type(e).__name__, e)
                 try:
                     # Third attempt: convert to string, then JSON encode the string
-                    return json.dumps(str(obj), ensure_ascii=False)
+                    json_string = json.dumps(str(obj), ensure_ascii=False)
+                    return json_string
                 except Exception as e:
                     # Final fallback: JSON encode error object with ASCII fallback for problematic Unicode
                     self.logger.warning("Failed to serialize object: %s: %s", type(e).__name__, e)
                     error_obj = {"error": "Serialization failed", "original_type": type(obj).__name__}
-                    return json.dumps(error_obj, ensure_ascii=False)
+                    json_string = json.dumps(error_obj, ensure_ascii=False)
+                    return json_string
 
     def _convert_to_sse(self, obj) -> bytes:
         """Convert object to Server-Sent Events format using safe serialization.
