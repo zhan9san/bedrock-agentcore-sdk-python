@@ -433,7 +433,7 @@ class BedrockAgentCoreApp(Starlette):
             str: JSON string representation of the object
         """
         try:
-            self.logger.error("AAAA %s", obj)
+            self.logger.error("AAAA")
             # First attempt: direct JSON serialization with Unicode support
             return json.dumps(obj, ensure_ascii=False)
         except (TypeError, ValueError, UnicodeEncodeError):
