@@ -294,8 +294,11 @@ class BedrockAgentCoreApp(Starlette):
             result = await self._invoke_handler(handler, request_context, takes_context, payload)
 
             duration = time.time() - start_time
-            self.logger.debug("XXXX Invoking duration: %s", duration)
-            self.logger.debug("XXXX Invoking handler: %s", type(result))
+            self.logger.debug("XXXX duration: %s", duration)
+            self.logger.debug("XXXX result type: %s", type(result))
+            self.logger.debug("XXXX result value: %s", result)
+            self.logger.debug("XXXX Invoking isgenerator: %s", inspect.isgenerator(result))
+            self.logger.debug("XXXX Invoking isasyncgen: %s", inspect.isasyncgen(result))
 
             if inspect.isgenerator(result):
                 self.logger.info("Returning streaming response (generator) (%.3fs)", duration)
@@ -430,11 +433,11 @@ class BedrockAgentCoreApp(Starlette):
             str: JSON string representation of the object
         """
         try:
-            self.logger.error("AAAA Error in sync streaming: %s: %s", type(e).__name__, e)
+            self.logger.error("AAAA %s", obj)
             # First attempt: direct JSON serialization with Unicode support
             return json.dumps(obj, ensure_ascii=False)
         except (TypeError, ValueError, UnicodeEncodeError):
-            self.logger.error("BBBB Error in sync streaming: %s: %s", type(e).__name__, e)
+            self.logger.error("BBBB")
             try:
                 # Second attempt: convert to serializable dictionaries, then JSON encode the dictionaries
                 obj = convert_complex_objects(obj)
