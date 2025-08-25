@@ -427,14 +427,17 @@ class BedrockAgentCoreApp(Starlette):
             str: JSON string representation of the object
         """
         try:
+            self.logger.error("AAAA Error in sync streaming: %s: %s", type(e).__name__, e)
             # First attempt: direct JSON serialization with Unicode support
             return json.dumps(obj, ensure_ascii=False)
         except (TypeError, ValueError, UnicodeEncodeError):
+            self.logger.error("BBBB Error in sync streaming: %s: %s", type(e).__name__, e)
             try:
                 # Second attempt: convert to serializable dictionaries, then JSON encode the dictionaries
                 obj = convert_complex_objects(obj)
                 return json.dumps(obj, ensure_ascii=False)
             except Exception as e:
+                self.logger.error("CCCC Error in sync streaming: %s: %s", type(e).__name__, e)
                 try:
                     # Third attempt: convert to string, then JSON encode the string
                     return json.dumps(str(obj), ensure_ascii=False)
