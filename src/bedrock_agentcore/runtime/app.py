@@ -294,6 +294,9 @@ class BedrockAgentCoreApp(Starlette):
             result = await self._invoke_handler(handler, request_context, takes_context, payload)
 
             duration = time.time() - start_time
+            self.logger.debug("XXXX Invoking duration: %s", duration)
+            self.logger.debug("XXXX Invoking handler: %s", type(result))
+
             if inspect.isgenerator(result):
                 self.logger.info("Returning streaming response (generator) (%.3fs)", duration)
                 return StreamingResponse(self._sync_stream_with_error_handling(result), media_type="text/event-stream")
